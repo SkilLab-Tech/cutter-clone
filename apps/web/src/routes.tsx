@@ -3,6 +3,7 @@ import { Layout } from "./Layout";
 import { NotFound } from "./NotFound";
 import { ScreenPlaceholder } from "./screens/ScreenPlaceholder";
 import { SCREENS } from "./screens/registry";
+import { SmokePage } from "./smoke/SmokePage";
 
 export const routes: RouteObject[] = [
   {
@@ -15,6 +16,8 @@ export const routes: RouteObject[] = [
           ? { index: true, element: <ScreenPlaceholder screen={s} /> }
           : { path: s.path.slice(1), element: <ScreenPlaceholder screen={s} /> },
       ),
+      // Hidden gate G-1 page (T-010); not in the navigation.
+      { path: "smoke", element: <SmokePage /> },
       { path: "*", element: <NotFound /> },
     ],
   },

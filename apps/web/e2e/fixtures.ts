@@ -18,7 +18,8 @@ export const test = base.extend<{ networkGuard: NetworkGuard }>({
 
       await context.route("**/*", async (route) => {
         const url = route.request().url();
-        if (new URL(url).origin === appOrigin) {
+        // file: loads stay on the machine (standalone smoke.html opened from disk).
+        if (new URL(url).origin === appOrigin || url.startsWith("file:")) {
           await route.continue();
         } else {
           blocked.push(url);

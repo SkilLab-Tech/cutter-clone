@@ -74,5 +74,46 @@
       "loading": "Loading information…",
       "error": "Could not load the information."
     }
+  },
+  "smoke": {
+    "title": "Cutter connection test",
+    "intro": "This page cuts a 25 mm square to confirm the computer can talk to the cutter.",
+    "steps": "Load a piece of vinyl, set force and speed on the cutter panel, set the origin, then click Connect cutter.",
+    "unsupported": "This browser cannot talk to the cutter. Use Chrome or Edge on a computer.",
+    "connect": "Connect cutter",
+    "cut": "Cut test square",
+    "disconnect": "Disconnect",
+    "status": {
+      "label": "Status",
+      "closed": "Disconnected",
+      "opening": "Connecting…",
+      "open": "Connected",
+      "lost": "Disconnected: the cable was pulled or the cutter turned off.",
+      "sending": "Sending…",
+      "sent": "Sent. This shows what was sent, not what has been cut."
+    },
+    "errors": {
+      "busy": "The port is in use by another program. Close other cutting programs and try again.",
+      "cancelled": "No port was chosen.",
+      "lost": "The cutter was disconnected. The app cannot lift the knife: press the pause button on the cutter panel.",
+      "generic": "Could not talk to the cutter."
+    },
+    "advanced": {
+      "title": "Advanced",
+      "baud": "Port speed (baud)",
+      "parity": "Parity",
+      "parityNone": "None",
+      "parityEven": "Even",
+      "parityOdd": "Odd",
+      "flow": "Flow control",
+      "flowNone": "None (none)",
+      "flowHardware": "Hardware, RTS/CTS (hardware)",
+      "xonxoff": "Software XON/XOFF",
+      "fixed": "8 data bits, 1 stop bit. Settings are locked while the port is open.",
+      "log": "Port log",
+      "logEmpty": "Nothing sent or received yet.",
+      "sentLine": "→ sent ({{n}} bytes): {{text}}",
+      "receivedLine": "← received ({{n}} bytes): {{hex}} | {{text}}"
+    }
   }
 }

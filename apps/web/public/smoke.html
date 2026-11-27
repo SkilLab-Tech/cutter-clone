@@ -1,0 +1,549 @@
+<!doctype html>
+<!--
+  cutter-clone — teste de conexão com a plotter (gate G-1, tarefa T-010).
+  Arquivo único, sem dependências e sem rede: pode ser aberto direto do disco (file://) no
+  Chrome ou no Edge. Se o navegador recusar, sirva a pasta em localhost
+  (ver docs/protocol/README.md). Licença MIT.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <title>Teste de conexão com a plotter</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #1a1a1a;
+        --muted: #4a4a4a;
+        --accent: #0b57d0;
+        --accent-fg: #ffffff;
+        --border: #c7c7c7;
+        --error-bg: #fdecea;
+        --error-fg: #8a1c12;
+        --ok-bg: #e6f4ea;
+        --ok-fg: #0d5223;
+        color-scheme: light dark;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        line-height: 1.5;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #121212;
+          --fg: #ececec;
+          --muted: #b8b8b8;
+          --accent: #8ab4f8;
+          --accent-fg: #121212;
+          --border: #444444;
+          --error-bg: #3b1512;
+          --error-fg: #ffb4a9;
+          --ok-bg: #0f2e1a;
+          --ok-fg: #a8dab5;
+        }
+      }
+      body {
+        margin: 0 auto;
+        max-width: 46rem;
+        padding: 1rem;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+      }
+      button {
+        font: inherit;
+        font-size: 1.1rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.4rem;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: var(--accent-fg);
+        cursor: pointer;
+      }
+      button.secondary {
+        background: transparent;
+        color: var(--accent);
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      select,
+      input {
+        font: inherit;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+      .box {
+        border-radius: 0.4rem;
+        padding: 0.6rem 0.9rem;
+      }
+      .error {
+        background: var(--error-bg);
+        color: var(--error-fg);
+      }
+      .ok {
+        background: var(--ok-bg);
+        color: var(--ok-fg);
+      }
+      ol li {
+        margin-bottom: 0.25rem;
+      }
+      details {
+        margin-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        padding-top: 0.75rem;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      fieldset {
+        border: 0;
+        padding: 0;
+        margin: 0.5rem 0;
+      }
+      .hint {
+        color: var(--muted);
+      }
+      pre {
+        white-space: pre-wrap;
+        word-break: break-all;
+        border: 1px solid var(--border);
+        border-radius: 0.4rem;
+        padding: 0.75rem;
+        min-height: 5rem;
+        font-size: 0.9rem;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Teste de conexão com a plotter</h1>
+      <p>
+        Esta página corta um quadrado de 25 mm para confirmar que o computador conversa com a
+        plotter.
+      </p>
+      <ol>
+        <li>Coloque um pedaço de vinil na plotter.</li>
+        <li>Ajuste a força e a velocidade no painel da plotter.</li>
+        <li>Marque a origem (onde o corte começa) no painel.</li>
+        <li>Feche outros programas de corte que estejam abertos.</li>
+        <li>Clique em <strong>Conectar plotter</strong> e escolha a porta da plotter na lista.</li>
+        <li>
+          Clique em <strong>Cortar quadrado de teste</strong> e meça o quadrado com uma régua.
+        </li>
+      </ol>
+
+      <p id="unsupported" class="box error" role="alert" hidden>
+        Este navegador não consegue conversar com a plotter. Use o Chrome ou o Edge no computador.
+        Se já estiver no Chrome, abra esta página por um endereço http://localhost (veja as
+        instruções do projeto).
+      </p>
+
+      <div id="app">
+        <p role="status" aria-live="polite">
+          <strong>Situação:</strong> <span id="status">Desconectado</span>
+        </p>
+        <div id="error" class="box error" role="alert" hidden></div>
+        <div id="sent" class="box ok" hidden>
+          Enviado. Isto mostra o que foi enviado, não o que já foi cortado. Se a faca não parar,
+          aperte o botão de pausa no painel da plotter.
+        </div>
+
+        <div class="actions">
+          <button type="button" id="connect">Conectar plotter</button>
+          <button type="button" id="cut" hidden>Cortar quadrado de teste</button>
+          <button type="button" id="disconnect" class="secondary" hidden>Desconectar</button>
+        </div>
+
+        <details id="advanced">
+          <summary>Avançado</summary>
+          <fieldset id="settings">
+            <p>
+              <label for="baud">Velocidade da porta (baud)</label>
+              <select id="baud">
+                <option value="9600">9600</option>
+                <option value="19200">19200</option>
+                <option value="38400" selected>38400</option>
+                <option value="57600">57600</option>
+                <option value="115200">115200</option>
+              </select>
+            </p>
+            <p>
+              <label for="parity">Paridade</label>
+              <select id="parity">
+                <option value="none" selected>Nenhuma (none)</option>
+                <option value="even">Par (even)</option>
+                <option value="odd">Ímpar (odd)</option>
+              </select>
+            </p>
+            <p>
+              <label for="flow">Controle de fluxo</label>
+              <select id="flow">
+                <option value="none" selected>Nenhum (none)</option>
+                <option value="hardware">Por hardware, RTS/CTS (hardware)</option>
+              </select>
+            </p>
+            <p>
+              <input type="checkbox" id="xonxoff" />
+              <label for="xonxoff"
+                >XON/XOFF por software (pausa ao receber 0x13, volta com 0x11)</label
+              >
+            </p>
+            <p class="hint">
+              8 bits de dados, 1 bit de parada. Os ajustes ficam travados enquanto a porta está
+              aberta. O quadrado é enviado em HPGL, 40 unidades por mm, com a origem em 0,0.
+            </p>
+          </fieldset>
+
+          <p class="actions">
+            <button type="button" id="query-oi" class="secondary" disabled>
+              Perguntar identificação (OI;)
+            </button>
+            <button type="button" id="query-os" class="secondary" disabled>
+              Perguntar situação (OS;)
+            </button>
+            <button type="button" id="copy-log" class="secondary">Copiar registro</button>
+          </p>
+
+          <h2>Registro da porta</h2>
+          <pre id="log" role="log" aria-live="polite">Nada enviado ou recebido ainda.</pre>
+        </details>
+      </div>
+    </main>
+
+    <script>
+      "use strict";
+      (function () {
+        // Quadrado de 25 mm em HPGL, 40 unidades/mm (igual a packages/core, T-009).
+        var UNITS_PER_MM = 40;
+        var SIZE = 25 * UNITS_PER_MM;
+        var SQUARE = "IN;PU0,0;PD" + SIZE + ",0," + SIZE + "," + SIZE + ",0," + SIZE + ",0,0;PU;";
+        var XON = 0x11;
+        var XOFF = 0x13;
+        var BLOCK = 64;
+
+        var $ = function (id) {
+          return document.getElementById(id);
+        };
+        var el = {
+          unsupported: $("unsupported"),
+          app: $("app"),
+          status: $("status"),
+          error: $("error"),
+          sent: $("sent"),
+          connect: $("connect"),
+          cut: $("cut"),
+          disconnect: $("disconnect"),
+          settings: $("settings"),
+          baud: $("baud"),
+          parity: $("parity"),
+          flow: $("flow"),
+          xonxoff: $("xonxoff"),
+          queryOi: $("query-oi"),
+          queryOs: $("query-os"),
+          copyLog: $("copy-log"),
+          log: $("log"),
+        };
+
+        var serial = navigator.serial;
+        if (!serial) {
+          el.unsupported.hidden = false;
+          el.app.hidden = true;
+          return;
+        }
+
+        var port = null;
+        var reader = null;
+        var readLoop = null;
+        var open = false;
+        var useXonXoff = false;
+        var paused = false;
+        var waiters = [];
+        var logLines = [];
+
+        function setStatus(text) {
+          el.status.textContent = text;
+        }
+        function showError(text) {
+          el.error.textContent = text;
+          el.error.hidden = !text;
+        }
+        function hex(bytes) {
+          var out = [];
+          for (var i = 0; i < bytes.length; i++) out.push(bytes[i].toString(16).padStart(2, "0"));
+          return out.join(" ");
+        }
+        function printable(bytes) {
+          var out = "";
+          for (var i = 0; i < bytes.length; i++) {
+            var b = bytes[i];
+            out += b >= 0x20 && b < 0x7f ? String.fromCharCode(b) : "·";
+          }
+          return out;
+        }
+        function addLog(line) {
+          var stamp = new Date().toLocaleTimeString("pt-BR");
+          logLines.push("[" + stamp + "] " + line);
+          el.log.textContent = logLines.join("\n");
+        }
+        function ascii(text) {
+          var out = new Uint8Array(text.length);
+          for (var i = 0; i < text.length; i++) out[i] = text.charCodeAt(i) & 0x7f;
+          return out;
+        }
+        function setConnectedUi(connected) {
+          el.connect.hidden = connected;
+          el.cut.hidden = !connected;
+          el.disconnect.hidden = !connected;
+          el.settings.disabled = connected;
+          el.queryOi.disabled = !connected;
+          el.queryOs.disabled = !connected;
+        }
+        function releaseWaiters() {
+          var w = waiters;
+          waiters = [];
+          w.forEach(function (fn) {
+            fn();
+          });
+        }
+        function waitWhilePaused() {
+          if (!paused) return Promise.resolve();
+          setStatus("Conectado, esperando a plotter pedir mais dados (XOFF recebido)…");
+          return new Promise(function (resolve) {
+            waiters.push(resolve);
+          });
+        }
+
+        function lost() {
+          if (!open) return;
+          open = false;
+          paused = false;
+          releaseWaiters();
+          port = null;
+          setConnectedUi(false);
+          setStatus("Desconectado: o cabo foi tirado ou a plotter desligou.");
+          showError(
+            "A plotter foi desconectada. O app não consegue levantar a faca: aperte o botão de pausa no painel da plotter.",
+          );
+          addLog("!! porta perdida (desconectada)");
+        }
+
+        serial.addEventListener("disconnect", function (event) {
+          if (port !== null && event.target === port) lost();
+        });
+
+        async function runReadLoop(p) {
+          while (open && p.readable) {
+            reader = p.readable.getReader();
+            try {
+              for (;;) {
+                var result = await reader.read();
+                if (result.done) break;
+                var bytes = result.value;
+                if (!bytes || bytes.length === 0) continue;
+                if (useXonXoff) {
+                  for (var i = 0; i < bytes.length; i++) {
+                    if (bytes[i] === XOFF) paused = true;
+                    else if (bytes[i] === XON) {
+                      paused = false;
+                      releaseWaiters();
+                    }
+                  }
+                }
+                addLog(
+                  "← recebido (" +
+                    bytes.length +
+                    " bytes): " +
+                    hex(bytes) +
+                    " | " +
+                    printable(bytes),
+                );
+              }
+            } catch (err) {
+              addLog(
+                "!! erro de leitura: " +
+                  (err && err.name ? err.name + ": " + err.message : String(err)),
+              );
+              if (!p.readable) lost();
+            } finally {
+              try {
+                reader.releaseLock();
+              } catch (e) {
+                /* já liberado */
+              }
+              reader = null;
+            }
+          }
+        }
+
+        async function writeBytes(bytes) {
+          for (var i = 0; i < bytes.length; i += BLOCK) {
+            await waitWhilePaused();
+            if (!open || !port || !port.writable) throw new Error("lost");
+            var writer = port.writable.getWriter();
+            try {
+              await writer.write(bytes.subarray(i, i + BLOCK));
+            } finally {
+              writer.releaseLock();
+            }
+          }
+        }
+
+        async function send(text, label) {
+          showError("");
+          el.sent.hidden = true;
+          var bytes = ascii(text);
+          try {
+            setStatus("Enviando…");
+            await writeBytes(bytes);
+            addLog("→ enviado " + label + " (" + bytes.length + " bytes): " + text);
+            if (open) setStatus("Conectado");
+            return true;
+          } catch (err) {
+            if (!open) lost();
+            else showError("Não foi possível falar com a plotter.");
+            addLog(
+              "!! erro ao enviar: " +
+                (err && err.name ? err.name + ": " + err.message : String(err)),
+            );
+            return false;
+          }
+        }
+
+        el.connect.addEventListener("click", async function () {
+          showError("");
+          el.sent.hidden = true;
+          var chosen;
+          try {
+            chosen = await serial.requestPort();
+          } catch (err) {
+            if (err && err.name === "NotFoundError") showError("Nenhuma porta foi escolhida.");
+            else if (err && err.name === "SecurityError")
+              showError(
+                "O navegador bloqueou o acesso às portas nesta página. Abra-a por um endereço http://localhost.",
+              );
+            else showError("Não foi possível falar com a plotter.");
+            addLog(
+              "!! requestPort: " + (err && err.name ? err.name + ": " + err.message : String(err)),
+            );
+            return;
+          }
+          var options = {
+            baudRate: Number(el.baud.value),
+            dataBits: 8,
+            stopBits: 1,
+            parity: el.parity.value,
+            flowControl: el.flow.value,
+          };
+          setStatus("Conectando…");
+          el.connect.disabled = true;
+          try {
+            await chosen.open(options);
+          } catch (err) {
+            el.connect.disabled = false;
+            setStatus("Desconectado");
+            if (err && (err.name === "NetworkError" || err.name === "InvalidStateError"))
+              showError(
+                "A porta está em uso por outro programa. Feche outros programas de corte e tente de novo.",
+              );
+            else showError("Não foi possível falar com a plotter.");
+            addLog("!! open: " + (err && err.name ? err.name + ": " + err.message : String(err)));
+            return;
+          }
+          el.connect.disabled = false;
+          port = chosen;
+          open = true;
+          useXonXoff = el.xonxoff.checked;
+          paused = false;
+          var info = chosen.getInfo ? chosen.getInfo() : {};
+          addLog(
+            "porta aberta: " +
+              JSON.stringify(options) +
+              ", XON/XOFF por software: " +
+              (useXonXoff ? "sim" : "não") +
+              ", USB vendor/product: " +
+              (info.usbVendorId !== undefined
+                ? "0x" + info.usbVendorId.toString(16).padStart(4, "0")
+                : "?") +
+              "/" +
+              (info.usbProductId !== undefined
+                ? "0x" + info.usbProductId.toString(16).padStart(4, "0")
+                : "?"),
+          );
+          setConnectedUi(true);
+          setStatus("Conectado");
+          readLoop = runReadLoop(chosen);
+        });
+
+        el.cut.addEventListener("click", async function () {
+          el.cut.disabled = true;
+          var ok = await send(SQUARE, "quadrado de 25 mm");
+          el.cut.disabled = false;
+          if (ok) {
+            el.sent.hidden = false;
+            setStatus("Enviado");
+          }
+        });
+
+        el.queryOi.addEventListener("click", function () {
+          void send("OI;", "pergunta de identificação");
+        });
+        el.queryOs.addEventListener("click", function () {
+          void send("OS;", "pergunta de situação");
+        });
+
+        el.disconnect.addEventListener("click", async function () {
+          var p = port;
+          open = false;
+          paused = false;
+          releaseWaiters();
+          port = null;
+          try {
+            if (reader) await reader.cancel();
+          } catch (e) {
+            /* ignorado */
+          }
+          if (readLoop) await readLoop.catch(function () {});
+          try {
+            if (p) await p.close();
+          } catch (e) {
+            /* a porta pode já ter sumido */
+          }
+          setConnectedUi(false);
+          el.sent.hidden = true;
+          setStatus("Desconectado");
+          addLog("porta fechada");
+        });
+
+        el.copyLog.addEventListener("click", async function () {
+          try {
+            await navigator.clipboard.writeText(el.log.textContent || "");
+            el.copyLog.textContent = "Registro copiado";
+          } catch (e) {
+            el.copyLog.textContent = "Não deu para copiar: selecione o texto à mão";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
