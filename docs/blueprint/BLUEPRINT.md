@@ -900,11 +900,11 @@ reuse drivers and geometry without the UI.
 - id: BP-NFR-004
   title: Browser support and degradation
   area: nfr  layer: ui  surfaces: [app]  priority: P0  delta: NEW
-  evidence: {tag: INFERRED, source: "MDN: Web Serial is limited availability, secure contexts only", rests_on: "Chromium desktop ships it; Firefox and Safari do not [VERIFY at build time]"}
+  evidence: {tag: INFERRED, source: "MDN: Web Serial is limited availability, secure contexts only", rests_on: "Chromium desktop ships it; Firefox desktop added it in v151 (May 2026, hacks.mozilla.org) behind a per-port permission; Safari does not"}
   required_cases: [happy, negative]
   acceptance:
     - "Given Chrome/Edge ≥ last 2 versions, Then everything works"
-    - "Given Firefox/Safari, Then design, PDF and .plt export work and Conectar is replaced by the banner"
+    - "Given Firefox ≥ 151, Then connecting works or, if the browser blocks Web Serial (e.g. enterprise policy), the banner explains it", "Given Safari, Then design, PDF and .plt export work and Conectar is replaced by the banner"
   verifier: e2e
   depends_on: []  blocked_by: []  status: specified
 
@@ -935,10 +935,10 @@ reuse drivers and geometry without the UI.
 
 | ID | Question | What settles it | Blocks |
 |---|---|---|---|
-| U-01 | How does the software ask the C48 Pro Cam to scan marks and cut in camera mode? (commands, mark-position header, replies on the port, units) | In this order: (1) ask Foison support for the command reference (WhatsApp (21) 99751-5409 / contato@foison.com.br); (2) have SignMaster send a camera job to a file or a virtual COM port and keep that file (exported artifact); (3) only if U-06 allows, log the bytes SignMaster sends on our own port with a serial monitor. Record in docs/protocol/foison-cam.md. Timebox: 2 sessions; then laser fallback or scope cut | BP-ARMS-002, -003, -004 |
+| U-01 | How does the software ask the C48 Pro Cam to scan marks and cut in camera mode? (commands, mark-position header, replies on the port, units) | First (added 2026-11-26, see docs/protocol/research-2026-11-26.md): have SignMaster save a plain job and a print-and-cut job as .PLT to a USB stick (Vinyl Spooler port "U-Disk"); in SignMaster's camera workflow the marks travel inside the PLT and the cutter scans them from its panel. Then: (1) ask Foison support for the command reference (WhatsApp (21) 99751-5409 / contato@foison.com.br); (2) have SignMaster send a camera job to a file or a virtual COM port and keep that file (exported artifact); (3) only if U-06 allows, log the bytes SignMaster sends on our own port with a serial monitor. Record in docs/protocol/foison-cam.md. Timebox: 2 sessions; then laser fallback or scope cut | BP-ARMS-002, -003, -004 |
 | U-02 | How does this unit appear on Windows (COM port via CH340/FTDI, or a vendor USB class)? Serial settings, CTS wiring, XON/XOFF, device buffer size, any status/position query (e.g. HPGL OA/ESC.B) | Device Manager screenshot + SignMaster port settings + the panel's comms menu + the /smoke page sending a 25 mm square; gate G-1 | BP-DEV-001, BP-DEV-002, BP-UX-008 (and transitively BP-DEV-006, BP-UX-010, BP-OSS-004) |
 | U-03 | Mark geometry the camera reads: shape, size, distance from edges, minimum gaps, extra marks for long jobs | The SignMaster job from U-01 printed to PDF + photo of the printed sheet with a ruler; Foison manual | BP-ARMS-001, BP-PRINT-001 |
-| U-04 | Usable widths (plain and contour), HPGL units/mm, coordinate cap, feed axis and origin, firmware blade offset, does it honour FS/VS (or a vendor equivalent), and does IN; reset panel settings | Panel + manual + cutting a 1000-unit line + a > 1 m job + an FS/VS test | none (profile fields ship editable and flagged [CONFIRMAR]) |
+| U-04 | Usable widths (plain and contour: VERIFIED 2026-11-26 on the product page as 120 cm / 116.5 cm, max media 139 cm), HPGL units/mm, coordinate cap, feed axis and origin, firmware blade offset, does it honour FS/VS (or a vendor equivalent), and does IN; reset panel settings | Panel + manual + cutting a 1000-unit line + a > 1 m job + an FS/VS test | none (profile fields ship editable and flagged [CONFIRMAR]) |
 | U-05 | Does the pendrive path accept a .plt or a camera-mode job? | Try a SignMaster-exported job from a USB stick | none (P1 idea) |
 | U-06 | Does the SignMaster EULA forbid observing its output or port traffic? | Read the EULA shown at install / in the program folder | BP-LEGAL-001; gates U-01 step 3 |
 | U-07 | Which ink is in the Epson's tank conversion (pigment or dye)? | pilot operator | print guide wording only |
