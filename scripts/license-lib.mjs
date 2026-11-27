@@ -21,6 +21,7 @@ export const ALLOWED = new Set([
   "MIT-0",
   "OFL-1.1",
   "Python-2.0",
+  "Unicode-3.0", // OSI-approved permissive (unicode-ident and similar Rust crates)
   "Unlicense",
   "Zlib",
 ]);
@@ -129,7 +130,8 @@ export function checkNpm(report, overrides = {}) {
 /**
  * @typedef {{
  *   id?: string, kind?: string, files?: string[], npmPackage?: string,
- *   source?: string, version?: string, license?: string, licenseFile?: string
+ *   source?: string, version?: string, license?: string, licenseFile?: string,
+ *   dependencyList?: string
  * }} ProvenanceEntry
  * @typedef {{ schemaVersion?: number, entries?: ProvenanceEntry[] }} Provenance
  */
@@ -178,6 +180,27 @@ export function checkProvenance(provenance, root) {
     }
     for (const f of e.files ?? []) {
       if (!existsSync(join(root, f))) problems.push(`${label}: file ${f} not found`);
+    }
+    // Optional TSV (name<TAB>version<TAB>licence) of everything linked into a WASM binary,
+    // e.g. the Rust crates of vtracer. Every licence must pass the same rules as npm.
+    if (typeof e.dependencyList === "string") {
+      const p = join(root, e.dependencyList);
+      if (!existsSync(p)) {
+        problems.push(`${label}: dependencyList ${e.dependencyList} not found`);
+      } else {
+        const lines = readFileSync(p, "utf8")
+          .split("\n")
+          .filter((l) => l.trim() !== "");
+        if (lines.length === 0)
+          problems.push(`${label}: dependencyList ${e.dependencyList} is empty`);
+        for (const line of lines) {
+          const [name, version, license] = line.split("\t");
+          // Cargo's legacy "MIT/Apache-2.0" means "MIT OR Apache-2.0".
+          const spdx = license === "(none)" ? undefined : license?.replace(/\//g, " OR ");
+          const verdict = evaluateLicense(spdx);
+          if (!verdict.ok) problems.push(`${label}: linked ${name}@${version}: ${verdict.reason}`);
+        }
+      }
     }
   });
   return problems;

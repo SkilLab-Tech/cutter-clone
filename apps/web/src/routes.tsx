@@ -23,6 +23,11 @@ export const routes: RouteObject[] = [
         path: "smoke/geometria",
         lazy: async () => ({ Component: (await import("./spikes/GeometrySpike")).default }),
       },
+      // T-013 spike (hidden, lazy chunk): vtracer WASM in a worker. Replaced by T-045.
+      {
+        path: "smoke/vetorizar",
+        lazy: async () => ({ Component: (await import("./spikes/TraceSpike")).default }),
+      },
       { path: "*", element: <NotFound /> },
     ],
   },

@@ -1,0 +1,5 @@
+source https://github.com/visioncortex/vtracer.git
+commit 82fedd1a9effeaf835d47518db8da60c4f3edaa7
+crate nodejs/ (vtracer-wasm)
+rustc 1.100.0 (0ef1bc386 2026-11-09)
+wasm-bindgen 0.2.130 --target web

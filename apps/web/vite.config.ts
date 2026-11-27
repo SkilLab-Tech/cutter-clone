@@ -9,7 +9,8 @@ import react from "@vitejs/plugin-react";
  */
 const CSP = [
   "default-src 'self'",
-  "script-src 'self'",
+  // 'wasm-unsafe-eval' allows WebAssembly compilation only (vtracer, T-013); JS eval stays blocked.
+  "script-src 'self' 'wasm-unsafe-eval'",
   "style-src 'self'",
   "img-src 'self' data: blob:",
   "font-src 'self'",

@@ -126,3 +126,21 @@ test("provenance: an unknown kind fails", () => {
   );
   assert.deepEqual(problems, ['provenance entry x: kind must be "wasm", "font" or "library"']);
 });
+
+test("provenance: a GPL crate inside a WASM dependencyList fails", () => {
+  const root = repoWithLicense();
+  writeFileSync(
+    join(root, "third-party", "licenses", "crates.tsv"),
+    "image\t0.25.0\tMIT OR Apache-2.0\nevil\t1.0.0\tGPL-3.0-only\n",
+  );
+  const problems = checkProvenance(
+    {
+      schemaVersion: 1,
+      entries: [{ ...goodEntry, dependencyList: "third-party/licenses/crates.tsv" }],
+    },
+    root,
+  );
+  assert.deepEqual(problems, [
+    "provenance entry x: linked evil@1.0.0: copyleft licence GPL-3.0-only",
+  ]);
+});

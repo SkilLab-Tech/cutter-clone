@@ -9,6 +9,19 @@
       "version": "2.0.1-19",
       "license": "BSL-1.0",
       "licenseFile": "third-party/licenses/clipper2-ts.txt"
+    },
+    {
+      "id": "vtracer-wasm",
+      "kind": "wasm",
+      "files": [
+        "apps/web/src/vendor/vtracer/vtracer_wasm_bg.wasm",
+        "apps/web/src/vendor/vtracer/vtracer_wasm.js"
+      ],
+      "source": "https://github.com/visioncortex/vtracer (crate nodejs/, commit 82fedd1a9effeaf835d47518db8da60c4f3edaa7; built by scripts/build-vtracer-wasm.sh)",
+      "version": "1.0.0-alpha.4+82fedd1",
+      "license": "MIT OR Apache-2.0",
+      "licenseFile": "third-party/licenses/vtracer.txt",
+      "dependencyList": "apps/web/src/vendor/vtracer/CRATES.tsv"
     }
   ]
 }
