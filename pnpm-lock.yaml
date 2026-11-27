@@ -266,6 +266,10 @@ importers:
         version: 5.1.2(@types/node@24.19.4)(jsdom@31.0.1)(vite@8.3.8(@types/node@24.19.4))
 
   packages/core:
+    dependencies:
+      clipper2-ts:
+        specifier: 2.0.1-19
+        version: 2.0.1-19
     devDependencies:
       '@types/node':
         specifier: 24.19.4
@@ -801,6 +805,10 @@ packages:
   chai@6.3.0:
     resolution: {integrity: sha512-XWAtwJ6OHO+tj0EKCs0Y2UamnyOxseZWltU4x2U2wh8g4AigdjwvtUjvLP2tqkA/avxHEtzxNaqGq/YGNwckKg==}
     engines: {node: '>=18'}
+
+  clipper2-ts@2.0.1-19:
+    resolution: {integrity: sha512-hBdoBBda/a/iLdpDckbDjEGAq5GRhHTRAv/Ys9f2oTBuixRy9uLZukG8pO5txtbf9wZTpBD3KFHuoLrEkI3r7g==}
+    engines: {node: '>=14.0.0'}
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -2052,6 +2060,8 @@ snapshots:
   caniuse-lite@1.0.30001828: {}
 
   chai@6.3.0: {}
+
+  clipper2-ts@2.0.1-19: {}
 
   convert-source-map@2.0.0: {}
 

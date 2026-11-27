@@ -117,3 +117,12 @@ test("coverage: an npm package shipping WASM needs an npmPackage entry", () => {
   );
   assert.deepEqual(ok, []);
 });
+
+test("provenance: an unknown kind fails", () => {
+  const root = repoWithLicense();
+  const problems = checkProvenance(
+    { schemaVersion: 1, entries: [{ ...goodEntry, kind: "js" }] },
+    root,
+  );
+  assert.deepEqual(problems, ['provenance entry x: kind must be "wasm", "font" or "library"']);
+});

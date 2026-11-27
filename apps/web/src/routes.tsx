@@ -18,6 +18,11 @@ export const routes: RouteObject[] = [
       ),
       // Hidden gate G-1 page (T-010); not in the navigation.
       { path: "smoke", element: <SmokePage /> },
+      // T-012 spike (hidden, lazy chunk): Clipper2 in a worker. Removed with T-018.
+      {
+        path: "smoke/geometria",
+        lazy: async () => ({ Component: (await import("./spikes/GeometrySpike")).default }),
+      },
       { path: "*", element: <NotFound /> },
     ],
   },

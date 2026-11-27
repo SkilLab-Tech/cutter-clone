@@ -135,7 +135,8 @@ export function checkNpm(report, overrides = {}) {
  */
 
 /**
- * Validates provenance entries for WASM modules and fonts.
+ * Validates provenance entries for WASM modules, fonts and key libraries (kind "library":
+ * an npm dependency whose licence text we keep, e.g. the Clipper2 port chosen in T-012).
  * @param {Provenance} provenance
  * @param {string} root repo root, to resolve licenseFile and files
  * @returns {string[]} problems
@@ -159,8 +160,8 @@ export function checkProvenance(provenance, root) {
       if (typeof value !== "string" || value.trim() === "")
         problems.push(`${label}: missing ${field}`);
     }
-    if (e.kind !== undefined && !["wasm", "font"].includes(e.kind)) {
-      problems.push(`${label}: kind must be "wasm" or "font"`);
+    if (e.kind !== undefined && !["wasm", "font", "library"].includes(e.kind)) {
+      problems.push(`${label}: kind must be "wasm", "font" or "library"`);
     }
     if ((e.files ?? []).length === 0 && !e.npmPackage) {
       problems.push(`${label}: needs files[] or npmPackage`);
