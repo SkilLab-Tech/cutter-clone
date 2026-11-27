@@ -13,10 +13,10 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "pnpm -r --if-present test",
+    "test": "pnpm -r --if-present test && node --test \"scripts/*.test.mjs\"",
     "e2e": "pnpm -F web e2e",
     "build": "pnpm -r --if-present build",
-    "licenses": "node scripts/license-gate.mjs",
+    "license-gate": "node scripts/license-gate.mjs",
     "i18n:check": "pnpm -F web i18n:check"
   },
   "devDependencies": {

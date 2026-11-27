@@ -36,6 +36,8 @@ jobs:
         run: pnpm lint
       - name: unit
         run: pnpm test
+      - name: license gate (BP-OSS-001)
+        run: pnpm license-gate
       - name: build
         run: pnpm build
       - name: install browsers
