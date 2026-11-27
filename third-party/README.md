@@ -25,7 +25,9 @@
 }
 ```
 
-Copy the upstream licence text verbatim into `third-party/licenses/`.
+`kind` is `wasm`, `font` or `library` (an npm dependency whose licence text we keep on file,
+such as the Clipper2 port chosen in T-012). Copy the upstream licence text verbatim into
+`third-party/licenses/`.
 
 ## license-overrides.json (optional)
 

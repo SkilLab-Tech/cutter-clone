@@ -29,9 +29,9 @@ a static, offline-first PWA, so Vite + React is used; Cloudflare Pages only host
 - Licence: MIT. CI blocks GPL/AGPL/LGPL in the shipped bundle (BP-OSS-001). Inkcut and potrace are GPL: read for ideas only, never vendored.
 
 ## Delivery
-- One worktree per feature; PRs carry THE-NNN when an issue exists.
+- One worktree per feature; PRs carry THE-NNN when an issue exists. Merge needs the `labs-gate` CheckRun green (ruleset on main).
 - Until a public release, main deploys straight to Pages (no external users, no staging).
-- Repo private until Ivan approves going public (publishing is a locked action).
+- Repo public since 2026-11-27 (Ivan's go). No names of people outside the project, partner locations, private contacts or agreement details in files, commits or PRs: use roles.
 - Hardware-dependent obligations (U-01..U-03) are built behind the `Driver` interface and closed only with a real-machine check at the partner workshop.
 
 ## LGPD

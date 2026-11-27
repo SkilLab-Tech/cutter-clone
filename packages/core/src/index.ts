@@ -25,3 +25,5 @@ export {
   type Transport,
   type TransportState,
 } from "./transport";
+// T-012 spike; removed when the real Clipper2 adapter lands (T-018).
+export { offsetSquareSpike, type OffsetSpikeResult } from "./spikes/clipper-offset";
