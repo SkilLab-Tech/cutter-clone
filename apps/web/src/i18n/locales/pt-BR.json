@@ -74,5 +74,46 @@
       "loading": "Carregando informações…",
       "error": "Não foi possível carregar as informações."
     }
+  },
+  "smoke": {
+    "title": "Teste de conexão com a plotter",
+    "intro": "Esta página corta um quadrado de 25 mm para confirmar que o computador conversa com a plotter.",
+    "steps": "Coloque um pedaço de vinil, ajuste a força e a velocidade no painel da plotter, marque a origem e depois clique em Conectar plotter.",
+    "unsupported": "Este navegador não consegue conversar com a plotter. Use o Chrome ou o Edge no computador.",
+    "connect": "Conectar plotter",
+    "cut": "Cortar quadrado de teste",
+    "disconnect": "Desconectar",
+    "status": {
+      "label": "Situação",
+      "closed": "Desconectado",
+      "opening": "Conectando…",
+      "open": "Conectado",
+      "lost": "Desconectado: o cabo foi tirado ou a plotter desligou.",
+      "sending": "Enviando…",
+      "sent": "Enviado. Isto mostra o que foi enviado, não o que já foi cortado."
+    },
+    "errors": {
+      "busy": "A porta está em uso por outro programa. Feche outros programas de corte e tente de novo.",
+      "cancelled": "Nenhuma porta foi escolhida.",
+      "lost": "A plotter foi desconectada. O app não consegue levantar a faca: aperte o botão de pausa no painel da plotter.",
+      "generic": "Não foi possível falar com a plotter."
+    },
+    "advanced": {
+      "title": "Avançado",
+      "baud": "Velocidade da porta (baud)",
+      "parity": "Paridade",
+      "parityNone": "Nenhuma",
+      "parityEven": "Par",
+      "parityOdd": "Ímpar",
+      "flow": "Controle de fluxo",
+      "flowNone": "Nenhum (none)",
+      "flowHardware": "Por hardware, RTS/CTS (hardware)",
+      "xonxoff": "XON/XOFF por software",
+      "fixed": "8 bits de dados, 1 bit de parada. Os ajustes ficam travados enquanto a porta está aberta.",
+      "log": "Registro da porta",
+      "logEmpty": "Nada enviado ou recebido ainda.",
+      "sentLine": "→ enviado ({{n}} bytes): {{text}}",
+      "receivedLine": "← recebido ({{n}} bytes): {{hex}} | {{text}}"
+    }
   }
 }

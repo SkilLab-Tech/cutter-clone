@@ -7,3 +7,21 @@ export {
   smokeSquareHpgl,
   type SmokeSquareOptions,
 } from "./drivers/hpgl/smoke-square";
+export {
+  BAUD_RATES,
+  DEFAULT_SERIAL_SETTINGS,
+  DeviceBusyError,
+  DeviceLostError,
+  PortSelectionCancelledError,
+  SerialUnsupportedError,
+  TransportError,
+  TransportNotOpenError,
+  XOFF,
+  XON,
+  type BaudRate,
+  type FlowControl,
+  type Parity,
+  type SerialSettings,
+  type Transport,
+  type TransportState,
+} from "./transport";
