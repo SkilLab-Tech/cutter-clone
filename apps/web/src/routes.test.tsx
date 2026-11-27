@@ -1,16 +1,27 @@
 // T-003 check: each route renders, with its empty / loading / error placeholders.
-import { afterEach, describe, expect, it } from "vitest";
+// T-008: both locales render every screen without missing keys.
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
+import { I18nextProvider } from "react-i18next";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { routes } from "./routes";
 import { SCREENS } from "./screens/registry";
-import { t } from "./i18n/t";
+import { createI18n, LANGUAGES, missingKeys, type Language } from "./i18n";
 
 afterEach(cleanup);
+beforeEach(() => {
+  missingKeys.length = 0;
+});
 
-function renderAt(url: string) {
+function renderAt(url: string, lng: Language = "pt-BR") {
+  const i18n = createI18n(lng);
   const router = createMemoryRouter(routes, { initialEntries: [url] });
-  return render(<RouterProvider router={router} />);
+  render(
+    <I18nextProvider i18n={i18n}>
+      <RouterProvider router={router} />
+    </I18nextProvider>,
+  );
+  return { t: (key: string) => i18n.t(key), container: document.body };
 }
 
 describe("app routes", () => {
@@ -32,7 +43,7 @@ describe("app routes", () => {
   for (const s of SCREENS) {
     describe(`${s.id} ${s.path}`, () => {
       it("renders its title and empty state by default", () => {
-        const { container } = renderAt(s.path);
+        const { t, container } = renderAt(s.path);
         expect(
           screen.getByRole("heading", { level: 1, name: t(`screens.${s.key}.title`) }),
         ).toBeTruthy();
@@ -43,28 +54,44 @@ describe("app routes", () => {
       });
 
       it("renders the loading state as a live status", () => {
-        renderAt(`${s.path}?estado=carregando`);
+        const { t } = renderAt(`${s.path}?estado=carregando`);
         expect(screen.getByRole("status").textContent).toContain(t(`screens.${s.key}.loading`));
       });
 
       it("renders the error state as an alert", () => {
-        renderAt(`${s.path}?estado=erro`);
+        const { t } = renderAt(`${s.path}?estado=erro`);
         expect(screen.getByRole("alert").textContent).toContain(t(`screens.${s.key}.error`));
       });
     });
   }
 
   it("shows a not-found page for unknown paths", () => {
-    renderAt("/nao-existe");
+    const { t } = renderAt("/nao-existe");
     expect(screen.getByRole("heading", { level: 1, name: t("app.notFound.title") })).toBeTruthy();
   });
+});
 
-  it("never shows an untranslated key", () => {
-    for (const s of SCREENS) {
-      for (const field of ["title", "empty", "loading", "error"]) {
-        const key = `screens.${s.key}.${field}`;
-        expect(t(key)).not.toBe(key);
-      }
-    }
+describe("i18n (BP-UX-007)", () => {
+  it("defaults to pt-BR", () => {
+    renderAt("/");
+    expect(screen.getByRole("heading", { level: 1, name: "Início" })).toBeTruthy();
   });
+
+  it("renders en", () => {
+    renderAt("/", "en");
+    expect(screen.getByRole("heading", { level: 1, name: "Start" })).toBeTruthy();
+  });
+
+  for (const lng of LANGUAGES) {
+    it(`${lng}: every screen and state renders with no missing key`, () => {
+      for (const s of SCREENS) {
+        for (const estado of ["vazio", "carregando", "erro"]) {
+          renderAt(`${s.path}?estado=${estado}`, lng);
+          cleanup();
+        }
+      }
+      renderAt("/nao-existe", lng);
+      expect(missingKeys).toEqual([]);
+    });
+  }
 });

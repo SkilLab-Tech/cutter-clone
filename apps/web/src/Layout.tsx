@@ -1,8 +1,9 @@
 import { NavLink, Outlet } from "react-router";
-import { t } from "./i18n/t";
+import { useTranslation } from "react-i18next";
 import { SCREENS } from "./screens/registry";
 
 export function Layout() {
+  const { t } = useTranslation();
   return (
     <>
       <a className="skip-link" href="#conteudo">

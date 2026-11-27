@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "cutter-clone",
+    "skipToContent": "Skip to content",
+    "nav": "App screens",
+    "notFound": {
+      "title": "Page not found",
+      "body": "This address does not exist in the app.",
+      "back": "Back to start"
+    }
+  },
+  "state": {
+    "loadingLabel": "Loading",
+    "errorTitle": "Something went wrong"
+  },
+  "screens": {
+    "inicio": {
+      "title": "Start",
+      "empty": "No projects yet. Pick a job to begin.",
+      "loading": "Loading your projects…",
+      "error": "Could not open the browser storage."
+    },
+    "plotter": {
+      "title": "Set up cutter",
+      "empty": "No cutter connected.",
+      "loading": "Connecting to the cutter…",
+      "error": "Could not connect to the cutter."
+    },
+    "calibracao": {
+      "title": "Test and calibration",
+      "empty": "Pick a material to make the test cut.",
+      "loading": "Cutting the test…",
+      "error": "The test cut did not finish."
+    },
+    "montagem": {
+      "title": "Layout",
+      "empty": "Drop a file here or type some text.",
+      "loading": "Opening the file…",
+      "error": "Could not open this file."
+    },
+    "vetorizar": {
+      "title": "Trace image",
+      "empty": "Pick an image to turn into cut lines.",
+      "loading": "Preparing the image…",
+      "error": "The image is too large or has no shapes to cut."
+    },
+    "imprimir": {
+      "title": "Print",
+      "empty": "Nothing to print yet.",
+      "loading": "Creating the PDF…",
+      "error": "The design does not fit on the chosen sheet."
+    },
+    "cortar": {
+      "title": "Cut",
+      "empty": "Nothing to cut yet.",
+      "loading": "Preparing the cut…",
+      "error": "The cutter was disconnected."
+    },
+    "materiais": {
+      "title": "Materials",
+      "empty": "No saved materials. You can restore the default materials.",
+      "loading": "Loading materials…",
+      "error": "One of the values is not valid."
+    },
+    "historico": {
+      "title": "History",
+      "empty": "No cuts yet.",
+      "loading": "Loading history…",
+      "error": "Could not read the history."
+    },
+    "sobre": {
+      "title": "About",
+      "empty": "Version, licences and privacy appear here.",
+      "loading": "Loading information…",
+      "error": "Could not load the information."
+    }
+  }
+}

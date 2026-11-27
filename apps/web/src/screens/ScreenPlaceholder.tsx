@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { t } from "../i18n/t";
+import { useTranslation } from "react-i18next";
 import { parseState, type ScreenDef, type ScreenState } from "./registry";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 }
 
 export function ScreenPlaceholder({ screen, state }: Props) {
+  const { t } = useTranslation();
   const [params] = useSearchParams();
   const current = state ?? parseState(params.get("estado"));
   const k = `screens.${screen.key}`;
