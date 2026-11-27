@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "cutter-clone",
+    "skipToContent": "Pular para o conteúdo",
+    "nav": "Telas do app",
+    "notFound": {
+      "title": "Página não encontrada",
+      "body": "Este endereço não existe no app.",
+      "back": "Voltar para o início"
+    }
+  },
+  "state": {
+    "loadingLabel": "Carregando",
+    "errorTitle": "Algo deu errado"
+  },
+  "screens": {
+    "inicio": {
+      "title": "Início",
+      "empty": "Nenhum projeto ainda. Escolha um trabalho para começar.",
+      "loading": "Carregando seus projetos…",
+      "error": "Não foi possível abrir o armazenamento do navegador."
+    },
+    "plotter": {
+      "title": "Configurar plotter",
+      "empty": "Nenhuma plotter conectada.",
+      "loading": "Conectando à plotter…",
+      "error": "Não foi possível conectar à plotter."
+    },
+    "calibracao": {
+      "title": "Teste e calibração",
+      "empty": "Escolha um material para fazer o corte de teste.",
+      "loading": "Cortando o teste…",
+      "error": "O corte de teste não terminou."
+    },
+    "montagem": {
+      "title": "Montagem",
+      "empty": "Arraste um arquivo para cá ou escreva um texto.",
+      "loading": "Abrindo o arquivo…",
+      "error": "Não foi possível abrir este arquivo."
+    },
+    "vetorizar": {
+      "title": "Vetorizar imagem",
+      "empty": "Escolha uma imagem para virar linhas de corte.",
+      "loading": "Preparando a imagem…",
+      "error": "A imagem é grande demais ou não tem formas para cortar."
+    },
+    "imprimir": {
+      "title": "Imprimir",
+      "empty": "Nada para imprimir ainda.",
+      "loading": "Gerando o PDF…",
+      "error": "O desenho não cabe na folha escolhida."
+    },
+    "cortar": {
+      "title": "Cortar",
+      "empty": "Nada para cortar ainda.",
+      "loading": "Preparando o corte…",
+      "error": "A plotter foi desconectada."
+    },
+    "materiais": {
+      "title": "Materiais",
+      "empty": "Nenhum material salvo. Você pode restaurar os materiais padrão.",
+      "loading": "Carregando materiais…",
+      "error": "Um dos valores não é válido."
+    },
+    "historico": {
+      "title": "Histórico",
+      "empty": "Nenhum corte feito ainda.",
+      "loading": "Carregando o histórico…",
+      "error": "Não foi possível ler o histórico."
+    },
+    "sobre": {
+      "title": "Sobre",
+      "empty": "Versão, licenças e privacidade aparecem aqui.",
+      "loading": "Carregando informações…",
+      "error": "Não foi possível carregar as informações."
+    }
+  }
+}
