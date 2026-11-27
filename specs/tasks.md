@@ -16,21 +16,21 @@
 - [ ] H-08 Ask the pilot operator which ink is in the tank (pigment or dye). Settles: U-07. (2 min)
 
 ## Phase 1 — Skeleton (depends on: none)
-- [ ] T-001 pnpm workspace with packages/core and apps/web, TS strict, ESLint, Prettier. Closes: —. Check: `pnpm typecheck` passes on empty packages. (10 min)
-- [ ] T-002 Vitest in core with fast-check; one sample property test. Closes: —. Check: `pnpm -F core test` green. (10 min)
-- [ ] T-003 Vite + React app shell with router and the 10 empty screens (S-01..S-10), each with empty/loading/error placeholders. Closes: —. Check: each route renders. (15 min)
-- [ ] T-004 Playwright with one smoke test and an @axe-core check on S-01. Closes: —. Check: local e2e green. (10 min)
-- [ ] T-005 GitHub Actions: typecheck, lint, unit, e2e, build; Cloudflare Pages deploy on main. Closes: BP-OSS-005. Check: a PR with a failing test is blocked. (15 min)
-- [ ] T-006 License gate on production deps + provenance file for WASM and fonts; MIT LICENSE. Closes: BP-OSS-001 (part). Check: adding a GPL dep fails CI; a WASM entry without a licence fails CI. (15 min)
-- [ ] T-007 Network guard fixture in Playwright that fails on any request outside the app origin. Closes: BP-NFR-003 (infra). Check: a test fetch to example.com fails. (10 min)
-- [ ] T-008 i18next with pt-BR default, an en file and a missing-key check. Closes: BP-UX-007 (infra). Check: a missing key fails CI. (15 min)
+- [x] T-001 pnpm workspace with packages/core and apps/web, TS strict, ESLint, Prettier. Closes: —. Check: `pnpm typecheck` passes on empty packages. (10 min)
+- [x] T-002 Vitest in core with fast-check; one sample property test. Closes: —. Check: `pnpm -F core test` green. (10 min)
+- [x] T-003 Vite + React app shell with router and the 10 empty screens (S-01..S-10), each with empty/loading/error placeholders. Closes: —. Check: each route renders. (15 min)
+- [x] T-004 Playwright with one smoke test and an @axe-core check on S-01. Closes: —. Check: local e2e green. (10 min)
+- [~] T-005 (partial 2026-11-27: workflow done and proven locally; blocked on GitHub billing + no ruleset on main) GitHub Actions: typecheck, lint, unit, e2e, build; Cloudflare Pages deploy on main. Closes: BP-OSS-005. Check: a PR with a failing test is blocked. (15 min)
+- [x] T-006 License gate on production deps + provenance file for WASM and fonts; MIT LICENSE. Closes: BP-OSS-001 (part). Check: adding a GPL dep fails CI; a WASM entry without a licence fails CI. (15 min)
+- [x] T-007 Network guard fixture in Playwright that fails on any request outside the app origin. Closes: BP-NFR-003 (infra). Check: a test fetch to example.com fails. (10 min)
+- [x] T-008 i18next with pt-BR default, an en file and a missing-key check. Closes: BP-UX-007 (infra). Check: a missing key fails CI. (15 min)
 
 ## Phase 1b — Gate G-1: can we reach the machine, and do the libraries build? (depends on: Phase 1; needs H-02/H-03 at the machine)
-- [ ] T-009 Minimal HPGL encoder for a fixed 25 mm square, no geometry layer. Closes: —. Check: bytes match a hand-written fixture. (10 min)
-- [ ] T-010 WebSerialTransport (open/write/close, disconnect events, busy error) + hidden /smoke page with baud/flow selectors that cuts the 25 mm square. Closes: BP-DEV-001 (sim part). Check: mocked-serial e2e. (15 min)
+- [x] T-009 Minimal HPGL encoder for a fixed 25 mm square, no geometry layer. Closes: —. Check: bytes match a hand-written fixture. (10 min)
+- [x] T-010 WebSerialTransport (open/write/close, disconnect events, busy error) + hidden /smoke page with baud/flow selectors that cuts the 25 mm square. Closes: BP-DEV-001 (sim part). Check: mocked-serial e2e. (15 min)
 - [ ] T-011 Run /smoke at the partner workshop on the C48 with H-02/H-03 settings; record result in docs/protocol/README.md. Closes: — (settles U-02). Check: square cut and measured. If no serial port: stop and re-plan BP-DEV-001 (WebUSB probe, else Tauri shell). (15 min)
-- [ ] T-012 Spike: Clipper2 JS/WASM port chosen; its own LICENSE recorded in provenance; offset a square by 2 mm in a Vite worker. Closes: — . Check: ±0.01 mm; licence entry passes the gate. (15 min)
-- [ ] T-013 Spike: vtracer WASM built for the browser and run in a worker on one PNG; licence recorded. Closes: —. Check: SVG output in < 5 s for 4 MP; fallback decision recorded if it fails. (15 min)
+- [x] T-012 Spike: Clipper2 JS/WASM port chosen; its own LICENSE recorded in provenance; offset a square by 2 mm in a Vite worker. Closes: — . Check: ±0.01 mm; licence entry passes the gate. (15 min)
+- [x] T-013 Spike: vtracer WASM built for the browser and run in a worker on one PNG; licence recorded. Closes: —. Check: SVG output in < 5 s for 4 MP; fallback decision recorded if it fails. (15 min)
 
 ## Phase 2 — Core geometry (depends on: Phase 1b)
 - [ ] T-015 Scene/Path model in mm; bounds; serialization; curve flattening ≤ 0.02 mm. Closes: BP-GEO-001 (part). Check: JSON round-trip property test; flatten error test. (15 min)
@@ -112,3 +112,8 @@
 
 ## KNOWN_FAILURE_MODES
 - (stub) append {date, task, failure, fix} as they happen
+- 2026-11-27, T-005: GitHub Actions jobs fail at 0 s ("recent account payments have failed or your spending limit needs to be increased"). Fix: Ivan fixes billing; meanwhile run the ci.yml steps locally in the Playwright Docker image from a fresh clone.
+- 2026-11-27, T-004: Playwright Chromium on labs-srv1 lacks system libs (libatk, libXdamage, libasound). Fix: run the runner in mcr.microsoft.com/playwright:v1.65.1-noble with --network host; preview server on the host.
+- 2026-11-27, T-003: pnpm 12 refused vite 8.4.0 (younger than its minimum release age) and added an exclude on its own. Fix: drop the exclude, pin vite 8.3.8.
+- 2026-11-27, T-007: the app CSP blocks stray fetches before Playwright routing sees them. Fix: the guard also counts securitypolicyviolation events.
+- 2026-11-27, T-013: @visioncortex/vtracer on npm ships Node-only glue. Fix: scripts/build-vtracer-wasm.sh builds --target web from source.

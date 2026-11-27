@@ -5,8 +5,10 @@
 - Blueprint: docs/blueprint/BLUEPRINT.md, aprovado em 2026-11-25. Readiness: ready-with-gaps.
 - PRD: none
 - Specs: specs/constitution.md, specs/spec.md, specs/plan.md, specs/tasks.md
-- Fase atual: Phase 0 (evidência de hardware, humana, no espaço parceiro) e Phase 1 (skeleton) em paralelo.
-- Próximo passo: T-001..T-005 (workspace pnpm, Vitest, shell Vite+React, Playwright, CI). Depois disso, o gate G-1 (T-009..T-013), antes da Phase 2.
+- Fase atual: Phase 1 feita (T-001..T-008); Phase 1b sem a máquina feita (T-009, T-010, T-012, T-013). PRs em rascunho empilhados: #2 (Phase 1) ← #4 (T-009/T-010) ← #5 (spikes). Nada mergeado.
+- Próximo passo: Ivan revisa os PRs e resolve o billing do GitHub Actions. No espaço parceiro: H-01..H-08 e T-011 com apps/web/public/smoke.html (instruções em docs/protocol/README.md). Phase 2 só depois do gate G-1 (T-011).
+- Pendências do Ivan: billing do Actions (jobs não rodam); ruleset em main exigindo o job `check` (repo privado precisa de GitHub Pro); projeto e segredos do Cloudflare Pages (variável CLOUDFLARE_PAGES_PROJECT + CLOUDFLARE_API_TOKEN/ACCOUNT_ID); identidade git do labs-srv1 (commits saíram como "labs-srv1 agent <labs@labs-srv1.local>").
+- CI local: os passos do ci.yml rodam num container mcr.microsoft.com/playwright:v1.65.1-noble a partir de um clone limpo (o host não tem as libs do Chromium).
 - Gaps abertos:
   - P0 bloqueadas: BP-DEV-001, BP-DEV-002, BP-UX-008 (U-02); BP-ARMS-001, BP-PRINT-001 (U-03); BP-ARMS-002 (U-01); BP-DEV-006, BP-OSS-004 (transitivas).
   - Incógnitas: U-01..U-08 (BLUEPRINT §10).
@@ -14,6 +16,9 @@
   - Ivan aprovou o repo privado em 2026-11-25.
   - Tornar público é ação travada: precisa do go do Ivan.
   - Defaults: MIT, monorepo pnpm (packages/core + apps/web), Vite+React, Cloudflare Pages.
+  - 2026-11-27: TS 6.0.3 (limite do typescript-eslint), Vite 8.3.8 (8.4.0 é novo demais para o release-age do pnpm), react-router 8, i18next 27.
+  - 2026-11-27: Clipper2 = clipper2-ts 2.0.1-19 (BSL-1.0); vtracer = build web próprio via scripts/build-vtracer-wasm.sh (commit 82fedd1). CSP com 'wasm-unsafe-eval'.
+  - 2026-11-27: Web Serial funciona em file:// no Chromium (docs/protocol/README.md). Padrão do smoke: 38400 8N1, sem controle de fluxo.
 
 ## Regras
 - O escopo é o ledger em docs/blueprint/BLUEPRINT.md §9. Nada fora dele.
